@@ -54,7 +54,7 @@ namespace mini_s_desktop
         /// <param name="stopbits">None / One / Two / OnePointFive</param>
         /// <param name="handshake">None / XOnXOff / RequestToSend / RequestToSendXOnXOff</param>
         public void Open(
-            string portname = "COM3",
+            string portname = "COM1",
             int baudrate = 115200,
             Parity parity = Parity.None,
             int databits = 8,
@@ -230,7 +230,7 @@ namespace mini_s_desktop
             Console.WriteLine("Ports disponible:");
             foreach (string s in SerialPort.GetPortNames())
             {
-                Console.WriteLine("   {0}", s);
+                Console.WriteLine("  {0}", s);
             }
 
             Console.Write("Veuillez entrer la valeur du port sélectionné (défault: {0}): ", defaultPortName);
