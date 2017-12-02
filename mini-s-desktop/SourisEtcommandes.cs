@@ -19,6 +19,32 @@ namespace mini_s_desktop
         INPUT[] pInputs,
         int cbSize);
 
+        [DllImport("user32.dll", EntryPoint = "GetForegroundWindow", SetLastError = true)]
+        static private extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll", EntryPoint = "ShowWindow", SetLastError = true)]
+        static private extern bool ShowWindow(
+        IntPtr hWnd,
+        int nCmdShow);
+
+        public enum N_CMD_SHOW
+        {
+
+            SW_FORCEMINIMIZE = 11,
+            SW_HIDE = 0,
+            SW_MAXIMIZE = 3,
+            SW_MINIMIZE = 6,
+            SW_RESTORE = 9,
+            SW_SHOW = 5,
+            SW_SHOWDEFAULT = 10,
+            SW_SHOWMAXIMIZED = 3,
+            SW_SHOWMINIMIZED = 2,
+            SW_SHOWMINNOACTIVE = 7,
+            SW_SHOWNA = 8,
+            SW_SHOWNOACTIVATE = 4,
+            SW_SHOWNORMAL = 1
+        }
+
         public enum TYPE_ENTREE
         {
             SOURIS = 0,
@@ -104,6 +130,11 @@ namespace mini_s_desktop
 
             INPUT[] commandeTab = { commande };
             SendInput(1, commandeTab, Marshal.SizeOf(commande));
+        }
+
+        private void MinimiseTopWindow()
+        {
+            ShowWindow(GetForegroundWindow(), (int)N_CMD_SHOW.SW_MINIMIZE);
         }
     }
 }
