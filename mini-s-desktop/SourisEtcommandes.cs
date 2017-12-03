@@ -119,6 +119,35 @@ namespace mini_s_desktop
 
         private void Handler_ReceptionSerie(object envoyeur, string donnees)
         {
+            int x = 0, y = 0;
+            foreach (string message in donnees.Split(';'))
+            {
+                string[] mot = message.Split(':');
+                switch (mot[0])
+                {
+                    case "x":
+                        x = Int32.Parse(mot[1]);
+                        break;
+                    case "y":
+                        y = Int32.Parse(mot[1]);
+                        break;
+                    case "m":
+                        MinimiserFenetre();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            BougerSouris(x, y);
+        }
+
+        private void MinimiserFenetre()
+        {
+            ShowWindow(GetForegroundWindow(), (int)N_CMD_SHOW.SW_MINIMIZE);
+        }
+
+        private void BougerSouris(int x, int y)
+        {
             INPUT commande = new INPUT();
             commande.type = (int)TYPE_ENTREE.SOURIS;
             commande.mi.dwFlags = (int)(EVENEMENTS_SOURIS.MOUSEEVENTF_MOVE);
@@ -126,15 +155,8 @@ namespace mini_s_desktop
             commande.mi.dy = 10;
             commande.mi.mouseData = 0;
 
-            Console.WriteLine("Reçu: {0}", donnees);
-
             INPUT[] commandeTab = { commande };
             SendInput(1, commandeTab, Marshal.SizeOf(commande));
-        }
-
-        private void MinimiseTopWindow()
-        {
-            ShowWindow(GetForegroundWindow(), (int)N_CMD_SHOW.SW_MINIMIZE);
         }
     }
 }
