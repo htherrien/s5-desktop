@@ -20,6 +20,8 @@ namespace mini_s_desktop
 
             SerialPortManager.Instance.SendString("Projet S5\n");
 
+            SerialPortManager.Instance.SendString("x:123 y:456\n");
+
             for (;;)
             {
                 ;

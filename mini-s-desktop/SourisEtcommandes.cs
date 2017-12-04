@@ -120,16 +120,17 @@ namespace mini_s_desktop
         private void Handler_ReceptionSerie(object envoyeur, string donnees)
         {
             int x = 0, y = 0;
-            foreach (string message in donnees.Split(';'))
+            char[] separateurs = {' ', ';'};
+            foreach (string message in donnees.Split(separateurs))
             {
                 string[] mot = message.Split(':');
                 switch (mot[0])
                 {
                     case "x":
-                        x = Int32.Parse(mot[1]);
+                        x = int.Parse(mot[1]);
                         break;
                     case "y":
-                        y = Int32.Parse(mot[1]);
+                        y = int.Parse(mot[1]);
                         break;
                     case "m":
                         MinimiserFenetre();
