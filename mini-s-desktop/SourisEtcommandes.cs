@@ -114,10 +114,10 @@ namespace mini_s_desktop
 
         public SourisEtCommandes()
         {
-            SerialPortManager.Instance.OnDataReceived += Handler_ReceptionSerie;
+            SerialPortManager.Instance.OnDataReceived += HandlerReceptionSerie;
         }
 
-        private void Handler_ReceptionSerie(object envoyeur, string donnees)
+        private void HandlerReceptionSerie(object envoyeur, string donnees)
         {
             int x = 0, y = 0;
             char[] separateurs = {' ', ';'};
