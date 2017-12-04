@@ -13,6 +13,9 @@ namespace mini_s_desktop
 {
     public class SourisEtCommandes
     {
+
+
+
         [DllImport("user32.dll", EntryPoint = "SendInput", SetLastError = true)]
         static private extern uint SendInput(
         uint nInputs,
@@ -26,6 +29,15 @@ namespace mini_s_desktop
         static private extern bool ShowWindow(
         IntPtr hWnd,
         int nCmdShow);
+
+        [DllImport("user32.dll", EntryPoint = "PostMessage", SetLastError = true)]
+        static private extern bool PostMessage(
+        IntPtr   hWnd,
+        uint   Msg,
+        IntPtr  wParam,
+        IntPtr  lParam);
+
+        private const uint WM_CLOSE = 0x0010;
 
         public enum N_CMD_SHOW
         {
@@ -132,8 +144,14 @@ namespace mini_s_desktop
                     case "y":
                         y = int.Parse(mot[1]);
                         break;
-                    case "m":
+                    case "min":
                         MinimiserFenetre();
+                        break;
+                    case "max":
+                        MaximiserFenetre();
+                        break;
+                    case "ferm":
+                        FermerFenetre();
                         break;
                     default:
                         break;
@@ -147,13 +165,24 @@ namespace mini_s_desktop
             ShowWindow(GetForegroundWindow(), (int)N_CMD_SHOW.SW_MINIMIZE);
         }
 
+        private void MaximiserFenetre()
+        {
+            ShowWindow(GetForegroundWindow(), (int)N_CMD_SHOW.SW_MAXIMIZE);
+        }
+
+        private void FermerFenetre()
+        {
+            PostMessage(GetForegroundWindow(), WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+        }
+
+
         private void BougerSouris(int x, int y)
         {
             INPUT commande = new INPUT();
             commande.type = (int)TYPE_ENTREE.SOURIS;
             commande.mi.dwFlags = (int)(EVENEMENTS_SOURIS.MOUSEEVENTF_MOVE);
-            commande.mi.dx = 10;
-            commande.mi.dy = 10;
+            commande.mi.dx = x;
+            commande.mi.dy = y;
             commande.mi.mouseData = 0;
 
             INPUT[] commandeTab = { commande };
