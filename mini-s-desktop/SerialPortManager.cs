@@ -179,6 +179,33 @@ namespace mini_s_desktop
             }
         }
 
+        /// <summary>
+        /// Write chars to the serial port
+        /// </summary>
+        /// <param name="message"></param>
+        public void SendChars(char[] message, int number)
+        {
+            if (_serialPort.IsOpen)
+            {
+                try
+                {
+                    _serialPort.Write(message, 0, number);
+
+                    if (OnStatusChanged != null)
+                        OnStatusChanged(this, string.Format(
+                        "Message sent: {0}",
+                        message));
+                }
+                catch (Exception ex)
+                {
+                    if (OnStatusChanged != null)
+                        OnStatusChanged(this, string.Format(
+                            "Failed to send string: {0}",
+                            ex.Message));
+                }
+            }
+        }
+
         private void StartReading()
         {
             if (!_keepReading)
