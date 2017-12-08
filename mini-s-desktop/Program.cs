@@ -8,6 +8,24 @@
 
 using System;
 using System.Threading;
+using System.ComponentModel;
+public static class EnumHelper
+{
+    /// <summary>
+    /// Gets an attribute on an enum field value
+    /// </summary>
+    /// <typeparam name="T">The type of the attribute you want to retrieve</typeparam>
+    /// <param name="enumVal">The enum value</param>
+    /// <returns>The attribute of type T that exists on the enum value</returns>
+    /// <example>string desc = myEnumVariable.GetAttributeOfType<DescriptionAttribute>().Description;</example>
+    public static T GetAttributeOfType<T>(this Enum enumVal) where T : System.Attribute
+    {
+        var type = enumVal.GetType();
+        var memInfo = type.GetMember(enumVal.ToString());
+        var attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
+        return (attributes.Length > 0) ? (T)attributes[0] : null;
+    }
+}
 
 namespace mini_s_desktop
 {
@@ -15,21 +33,27 @@ namespace mini_s_desktop
     {
         static void Main(string[] args)
         {
+
             SerialPortManager.Instance.Open("COM1");
             SourisEtCommandes souris = new SourisEtCommandes();
 
+            Console.Write("Veuillez choisir le mouvement à enregistrer:\n0. maximiser\n1. minimiser\n2. fermer\n");
+
             for (;;)
             {
-                Console.Write("Veuillez choisir le mouvement à enregistrer (1-2):");
-                int mouvement = int.Parse(Console.ReadLine());
-                if(mouvement >= 1 && mouvement <= 2)
+                int mouvement;
+                                string entree = Console.ReadLine();
+                if (!int.TryParse(entree, out mouvement))
+                {
+                    Console.Write("La commande \"" + entree + "\" est invalide\n");
+                }
+                else if(mouvement >= 0 && mouvement <= 2)
                 {
                     char[] message = { Convert.ToChar(mouvement) };
                     SerialPortManager.Instance.SendChars(message, 1);
-                    Console.Write("Le mouvement {0} est en cours d'enregistrement\n", mouvement);
-                    Thread.Sleep(1000*64/40);// Sleep for the recroding period
-                    Console.Write("Le mouvement {0} est enregistré\n", mouvement);
-                }           
+                    Console.Write("Veuillez appuyer sur le bouton pouce sur le gant pour démarrer l'enregistrement\n", mouvement);
+                }
+                SourisEtCommandes.ClicGauche();
             }
 
         }

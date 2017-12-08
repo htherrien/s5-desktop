@@ -7,14 +7,27 @@
 // 
 
 using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Threading;
+
 
 namespace mini_s_desktop
 {
     public class SourisEtCommandes
     {
-
-
+        // TODO: Try to find a way to implement the command parsing using this enum
+        public enum Mouvements
+        {
+            [Description("max")]
+            MOUVEMENT_MAXIMISER = 0,
+            [Description("min")]
+            MOUVEMENT_MINIMISER = 1,
+            [Description("ferm")]
+            MOUVEMENT_FERMER = 2,
+            NB_MOUVEMENTS,
+            AUCUN_MOUVEMENT
+        }
 
         [DllImport("user32.dll", EntryPoint = "SendInput", SetLastError = true)]
         static private extern uint SendInput(
@@ -136,6 +149,7 @@ namespace mini_s_desktop
             foreach (string message in donnees.Split(separateurs))
             {
                 string[] mot = message.Split(':');
+
                 switch (mot[0])
                 {
                     case "x":
@@ -144,14 +158,20 @@ namespace mini_s_desktop
                     case "y":
                         y = int.Parse(mot[1]);
                         break;
-                    case "min":
-                        MinimiserFenetre();
-                        break;
                     case "max":
                         MaximiserFenetre();
                         break;
+                    case "min":
+                        MinimiserFenetre();
+                        break;
                     case "ferm":
                         FermerFenetre();
+                        break;
+                    case "cg":
+                        ClicGauche();
+                        break;
+                    case "et":
+                        EnregistrementTermine();
                         break;
                     default:
                         break;
@@ -175,6 +195,23 @@ namespace mini_s_desktop
             PostMessage(GetForegroundWindow(), WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
         }
 
+        private void EnregistrementTermine()
+        {
+            Console.Write("Enregistrement terminé\n");
+        }
+
+        public static void ClicGauche()
+        {
+            INPUT commande = new INPUT();
+            commande.type = (int)TYPE_ENTREE.SOURIS;
+            commande.mi.dwFlags = (int)(EVENEMENTS_SOURIS.MOUSEEVENTF_LEFTDOWN | EVENEMENTS_SOURIS.MOUSEEVENTF_LEFTUP);
+            commande.mi.dx = 0;
+            commande.mi.dy = 0;
+            commande.mi.mouseData = 0;
+
+            INPUT[] commandeTab = { commande };
+            SendInput(1, commandeTab, Marshal.SizeOf(commande));
+        }
 
         private void BougerSouris(int x, int y)
         {
